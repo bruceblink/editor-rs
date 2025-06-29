@@ -250,7 +250,7 @@ fn title_bar_ui(ui: &mut egui::Ui, title_bar_rect: eframe::epaint::Rect, title: 
 fn close_maximize_minimize(ui: &mut egui::Ui) {
     use egui::{Button, RichText};
 
-    let button_height = 12.0;
+    let button_height = 20.0;
 
     let close_response = ui
         .add(Button::new(RichText::new("❌").size(button_height)))
