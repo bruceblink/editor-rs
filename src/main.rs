@@ -36,9 +36,11 @@ impl eframe::App for MyApp {
         set_chinese_font(ctx);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Drag-and-drop files onto the window!");
-
-            
-            
+            // Show the theme preference buttons:
+            ui.horizontal(|ui| {
+                ui.label("egui theme:");
+                egui::widgets::global_theme_preference_buttons(ui);
+            });
             if ui.button("Open file…").clicked() {
                 if let Some(path) = rfd::FileDialog::new().pick_file() {
                     self.picked_path = Some(path.display().to_string());
