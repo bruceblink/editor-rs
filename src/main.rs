@@ -2,6 +2,8 @@
 // #![allow(rustdoc::missing_crate_level_docs)] // it's an example
 
 use eframe::egui;
+use egui::{FontDefinitions, FontFamily};
+use std::sync::Arc;
 
 fn main() -> eframe::Result {
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
@@ -26,6 +28,8 @@ struct MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Set a custom Chinese font for the application.
+        set_chinese_font(ctx);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Drag-and-drop files onto the window!");
 
@@ -73,17 +77,44 @@ impl eframe::App for MyApp {
             }
         });
 
-        preview_files_being_dropped(ctx);
+        /*preview_files_being_dropped(ctx);
 
         // Collect dropped files:
         ctx.input(|i| {
             if !i.raw.dropped_files.is_empty() {
                 self.dropped_files.clone_from(&i.raw.dropped_files);
             }
-        });
+        });*/
     }
 }
 
+/** * Set a custom Chinese font for the application.
+ * This function is called to ensure that the application can display Chinese characters correctly.
+ */
+fn set_chinese_font(ctx: &egui::Context) {
+    let mut fonts = FontDefinitions::default();
+
+    // 加载自定义中文字体
+    fonts.font_data.insert(
+        "my_chinese".to_owned(),
+        Arc::from(egui::FontData::from_static(include_bytes!("../fonts/simsun.ttc"))), // 路径根据实际情况调整
+    );
+
+    // 将自定义字体加入到 Proportional 和 Monospace 字体族的最前面
+    fonts
+        .families
+        .get_mut(&FontFamily::Proportional)
+        .unwrap()
+        .insert(0, "my_chinese".to_owned());
+    fonts
+        .families
+        .get_mut(&FontFamily::Monospace)
+        .unwrap()
+        .insert(0, "my_chinese".to_owned());
+
+    ctx.set_fonts(fonts);
+}
+/*
 /// Preview hovering files:
 fn preview_files_being_dropped(ctx: &egui::Context) {
     use egui::{Align2, Color32, Id, LayerId, Order, TextStyle};
@@ -117,4 +148,5 @@ fn preview_files_being_dropped(ctx: &egui::Context) {
             Color32::WHITE,
         );
     }
-}
+}*/
+
