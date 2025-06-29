@@ -1,6 +1,7 @@
-use eframe::egui::{self, TopBottomPanel};
+use eframe::egui::{self, TopBottomPanel, ViewportCommand};
+use crate::editor_app::EditorApp;
 
-pub fn menu_example(ctx: &egui::Context) {
+pub fn menu_example(editor: &mut EditorApp, ctx: &egui::Context) {
     // 在应用窗口的最顶端创建一个“菜单栏”面板
     TopBottomPanel::top("menu_bar").show(ctx, |ui| {
         // 用 egui 提供的 menu::bar 来布局一排菜单按钮
@@ -11,11 +12,21 @@ pub fn menu_example(ctx: &egui::Context) {
                     // 处理 New
                 }
                 if ui.button("Open…").clicked() {
-                    // 处理 Open
+                    if let Some(path) = rfd::FileDialog::new().pick_file() {
+                        editor.picked_path = Some(path.display().to_string());
+                    }
+                }
+
+                if let Some(picked_path) = &editor.picked_path {
+                    ui.horizontal(|ui| {
+                        ui.label("Picked file:");
+                        ui.monospace(picked_path);
+                    });
                 }
                 ui.separator();
                 if ui.button("Quit").clicked() {
                     // 退出应用
+                    ui.ctx().send_viewport_cmd(ViewportCommand::Close);
                 }
             });
 

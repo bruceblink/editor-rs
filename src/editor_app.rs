@@ -1,21 +1,21 @@
-use std::sync::Arc;
+use crate::menu::menu_example;
 use eframe::egui;
 use eframe::egui::{FontDefinitions, FontFamily, UiBuilder, ViewportCommand};
-use crate::menu::menu_example;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct EditorApp {
-    show_confirmation_dialog: bool,
-    allowed_to_close: bool,
+    pub(crate) show_confirmation_dialog: bool,
+    pub(crate) allowed_to_close: bool,
     dropped_files: Vec<egui::DroppedFile>,
-    picked_path: Option<String>,
+    pub(crate) picked_path: Option<String>,
 }
 
 impl eframe::App for EditorApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Set a custom Chinese font for the application.
         set_chinese_font(ctx);
-        menu_example(ctx);
+        menu_example(self, ctx);
         let _panel_frame = egui::Frame::new()
             .fill(ctx.style().visuals.window_fill())
             .corner_radius(10)
@@ -42,18 +42,7 @@ impl eframe::App for EditorApp {
             let _content_ui = ui.new_child(UiBuilder::new().max_rect(_content_rect));
             ui.label("Drag-and-drop files onto the window!");
 
-            if ui.button("Open file…").clicked() {
-                if let Some(path) = rfd::FileDialog::new().pick_file() {
-                    self.picked_path = Some(path.display().to_string());
-                }
-            }
 
-            if let Some(picked_path) = &self.picked_path {
-                ui.horizontal(|ui| {
-                    ui.label("Picked file:");
-                    ui.monospace(picked_path);
-                });
-            }
 
             // Show dropped files (if any):
             if !self.dropped_files.is_empty() {
@@ -85,6 +74,7 @@ impl eframe::App for EditorApp {
                 });
             }
         });
+
         if ctx.input(|i| i.viewport().close_requested()) {
             if self.allowed_to_close {
                 // do nothing - we will close
@@ -93,10 +83,10 @@ impl eframe::App for EditorApp {
                 self.show_confirmation_dialog = true;
             }
         }
-
         if self.show_confirmation_dialog {
             egui::Window::new("Do you want to quit?")
                 .collapsible(false)
+                .current_pos(ctx.screen_rect().center())
                 .resizable(false)
                 .show(ctx, |ui| {
                     ui.horizontal(|ui| {
