@@ -10,7 +10,9 @@ fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([640.0, 480.0]) // wide enough for the drag-drop overlay text
-            .with_drag_and_drop(true),
+            .with_drag_and_drop(true)
+            .with_resizable(true),
+        // Enable drag-and-drop support for the viewport.
         ..Default::default()
     };
     eframe::run_native(
@@ -22,6 +24,8 @@ fn main() -> eframe::Result {
 
 #[derive(Default)]
 struct MyApp {
+    show_confirmation_dialog: bool,
+    allowed_to_close: bool,
     dropped_files: Vec<egui::DroppedFile>,
     picked_path: Option<String>,
 }
@@ -33,6 +37,8 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Drag-and-drop files onto the window!");
 
+            
+            
             if ui.button("Open file…").clicked() {
                 if let Some(path) = rfd::FileDialog::new().pick_file() {
                     self.picked_path = Some(path.display().to_string());
@@ -76,7 +82,34 @@ impl eframe::App for MyApp {
                 });
             }
         });
+        if ctx.input(|i| i.viewport().close_requested()) {
+            if self.allowed_to_close {
+                // do nothing - we will close
+            } else {
+                ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+                self.show_confirmation_dialog = true;
+            }
+        }
 
+        if self.show_confirmation_dialog {
+            egui::Window::new("Do you want to quit?")
+                .collapsible(false)
+                .resizable(false)
+                .show(ctx, |ui| {
+                    ui.horizontal(|ui| {
+                        if ui.button("No").clicked() {
+                            self.show_confirmation_dialog = false;
+                            self.allowed_to_close = false;
+                        }
+
+                        if ui.button("Yes").clicked() {
+                            self.show_confirmation_dialog = false;
+                            self.allowed_to_close = true;
+                            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    });
+                });
+        }
         /*preview_files_being_dropped(ctx);
 
         // Collect dropped files:
