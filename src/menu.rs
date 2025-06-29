@@ -31,10 +31,17 @@ pub fn menu_example(ctx: &egui::Context) {
 
             // Help 菜单
             ui.menu_button("Help", |ui| {
+                ui.horizontal(|ui| {
+                    ui.label("theme:");
+                    egui::widgets::global_theme_preference_buttons(ui);
+                });
                 if ui.button("About…").clicked() {
                     // 弹出 About 对话框
+
                 }
             });
+
         });
+        
     });
 }

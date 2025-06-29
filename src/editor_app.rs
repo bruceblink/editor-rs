@@ -40,11 +40,6 @@ impl eframe::App for EditorApp {
                 rect
             }.shrink(4.0);
             let _content_ui = ui.new_child(UiBuilder::new().max_rect(_content_rect));
-            // Show the theme preference buttons:
-            ui.horizontal(|ui| {
-                ui.label("theme:");
-                egui::widgets::global_theme_preference_buttons(ui);
-            });
             ui.label("Drag-and-drop files onto the window!");
 
             if ui.button("Open file…").clicked() {
