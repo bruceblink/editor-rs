@@ -14,7 +14,7 @@ fn main() -> eframe::Result {
         ..Default::default()
     };
     eframe::run_native(
-        "Native file dialogs and drag-and-drop files",
+        "Editor-rs",
         options,
         Box::new(|_cc| Ok(Box::<MyApp>::default())),
     )
