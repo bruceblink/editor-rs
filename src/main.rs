@@ -9,7 +9,7 @@ fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_decorations(false)  // Hide the OS-specific "chrome" around the window
-            .with_inner_size([640.0, 480.0])// Initial size of the window
+            .with_inner_size([1280.0, 1024.0])// Initial size of the window
             .with_drag_and_drop(true)  // wide enough for the drag-drop overlay text
             .with_resizable(true),  // Allow resizing the window
         ..Default::default()
