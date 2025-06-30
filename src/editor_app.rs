@@ -1,8 +1,8 @@
 use crate::menu::menu_example;
-use eframe::egui;
-use eframe::egui::{FontDefinitions, FontFamily, ViewportCommand};
-use std::sync::Arc;
 use crate::title_bar::title_bar_ui;
+use eframe::egui;
+use eframe::egui::{FontDefinitions, FontFamily, Id, LayerId, Order, Stroke, TopBottomPanel, ViewportCommand};
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct EditorApp {
@@ -16,26 +16,28 @@ impl eframe::App for EditorApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Set a custom Chinese font for the application.
         set_chinese_font(ctx);
-
+        let title_frame = custom_title_bar_frame(ctx);
         // 顶部 title_bar
-        egui::TopBottomPanel::top("title_bar_panel").exact_height(32.0).show(ctx, |ui| {
+        TopBottomPanel::top("title_bar_panel").frame(title_frame).exact_height(32.0).show(ctx, |ui| {
             let rect = ui.max_rect();
             title_bar_ui(ui, rect, "Editor-rs");
         });
         // 顶部 menu_bar，紧跟 title_bar 之下
-        egui::TopBottomPanel::top("menu_bar_panel").exact_height(24.0).show(ctx, |ui| {
+        TopBottomPanel::top("menu_bar_panel").exact_height(24.0).show(ctx, |ui| {
             menu_example(self, ui);
+            let rect   = ui.clip_rect();
+            let color  = ctx.style().visuals.widgets.noninteractive.fg_stroke.color;
+            let stroke = Stroke::new(2.0, color);  // 把宽度设为 2
+
+            let painter = ui.painter();
+            painter.line_segment([rect.left_top(),    rect.left_bottom()],  stroke);
+            painter.line_segment([rect.right_top(),   rect.right_bottom()], stroke);
         });
 
-        let _panel_frame = egui::Frame::new()
-            .fill(ctx.style().visuals.window_fill())
-            .corner_radius(10)
-            .stroke(ctx.style().visuals.widgets.noninteractive.fg_stroke)
-            .outer_margin(1); // so the stroke is within the bounds
+        let _panel_frame = custom_central_panel_frame(ctx);
 
         egui::CentralPanel::default().frame(_panel_frame).show(ctx, |ui| {
             ui.label("Drag-and-drop files onto the window!");
-
             if let Some(picked_path) = &self.picked_path {
                 ui.horizontal(|ui| {
                     ui.label("Picked file:");
@@ -179,3 +181,29 @@ fn preview_files_being_dropped(ctx: &egui::Context) {
     }
 }
 
+
+
+fn custom_title_bar_frame(ctx: &egui::Context) -> egui::Frame {
+    use egui::CornerRadius;
+    let mut rounding = CornerRadius::ZERO;
+    rounding.nw = 10.0 as u8; // 右上角
+    rounding.ne = 10.0 as u8; // 右下角
+
+    egui::Frame::NONE
+        .fill(ctx.style().visuals.window_fill())
+        //.stroke(ctx.style().visuals.widgets.noninteractive.fg_stroke)
+        .corner_radius(rounding)
+        .outer_margin(1.0)
+}
+
+fn custom_central_panel_frame(ctx: &egui::Context) -> egui::Frame {
+    use egui::CornerRadius;
+    let mut rounding = CornerRadius::ZERO;
+    rounding.sw = 10.0 as u8; // 左下角
+    rounding.se = 10.0 as u8; // 右下角
+
+    egui::Frame::NONE
+        .fill(ctx.style().visuals.window_fill())
+        .corner_radius(rounding)
+        .outer_margin(1.0)
+}
