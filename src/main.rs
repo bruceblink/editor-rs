@@ -17,6 +17,6 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Editor-rs",
         options,
-        Box::new(|_cc| Ok(Box::<EditorApp>::default())),
+        Box::new(|_cc| Ok(Box::new(EditorApp::new(_cc)))),
     )
 }

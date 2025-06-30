@@ -17,8 +17,6 @@ pub struct EditorApp {
 
 impl eframe::App for EditorApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Set a custom Chinese font for the application.
-        set_chinese_font(ctx);
         // 构建title bar
         self.title_bar.title_bar(ctx);
         // 构建 menu bar
@@ -109,7 +107,8 @@ impl EditorApp {
         }
     }
     
-    pub fn new() -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        set_chinese_font(&cc.egui_ctx);
         Self::default()
     }
     
