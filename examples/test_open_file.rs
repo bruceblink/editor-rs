@@ -55,13 +55,13 @@ impl eframe::App for MyApp {
                 }
             });
         });
-   /*      // 禁用底部面板的空白
+         // 禁用底部面板的空白
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
             // 此处可以放入一些状态显示或空的内容，避免占用过多空间
             ui.horizontal(|ui| {
-                ui.label("底部面板内容");
+                ui.label("状态栏：当前没有额外信息");
             });
-        }); */
+        }); 
         // 中央面板：带滚动条的文本显示/编辑区
         // 获取中央面板的可用空间
         egui::CentralPanel::default().show(ctx, |ui| {
