@@ -8,6 +8,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::sync::Arc;
 use eframe::egui::{FontDefinitions, FontFamily};
+//use editor_rs::editor_app::EditorApp;
 
 struct MyApp {
     file_content: String,
@@ -44,19 +45,30 @@ impl eframe::App for MyApp {
         egui::TopBottomPanel::top("top_bar").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 // 打开文件
-                if ui.button("打开文件…").clicked() {
+                if ui.button("Open…").clicked() {
                     self.open_file();
                 }
 
                 // 保存文件
-                if ui.button("保存文件").clicked() {
+                if ui.button("Save").clicked() {
                     self.save_file();
                 }
             });
         });
-
+   /*      // 禁用底部面板的空白
+        egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
+            // 此处可以放入一些状态显示或空的内容，避免占用过多空间
+            ui.horizontal(|ui| {
+                ui.label("底部面板内容");
+            });
+        }); */
         // 中央面板：带滚动条的文本显示/编辑区
+        // 获取中央面板的可用空间
         egui::CentralPanel::default().show(ctx, |ui| {
+            let available_height = ui.available_height();
+            let available_width = ui.available_width();
+
+            // 显示当前文件名
             ui.label(
                 self.current_file
                     .as_ref()
@@ -64,15 +76,16 @@ impl eframe::App for MyApp {
                     .and_then(|n| n.to_str())
                     .unwrap_or("未命名文件"),
             );
+
             ScrollArea::vertical()
+                .max_height(available_height)
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
-                    ui.add(
+                    ui.add_sized(
+                        [available_width, available_height],
                         egui::TextEdit::multiline(&mut self.file_content)
                             .font(egui::TextStyle::Monospace)
-                            .desired_rows(20)
                             .lock_focus(false)
-                            .desired_width(f32::INFINITY),
                     );
                 });
         });
@@ -151,11 +164,18 @@ fn set_chinese_font(ctx: &egui::Context) {
 }
 
 fn main()  -> eframe::Result{
-    let app = MyApp::default();
-    let native_options = eframe::NativeOptions::default();
+    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+    let options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_decorations(true)  // Hide the OS-specific "chrome" around the window
+            .with_inner_size([1280.0, 1024.0])// Initial size of the window
+            .with_drag_and_drop(true)  // wide enough for the drag-drop overlay text
+            .with_resizable(true),  // Allow resizing the window
+        ..Default::default()
+    };
     eframe::run_native(
-        "简单文本编辑器",
-        native_options,
-        Box::new(|_cc| Ok(Box::new(app))),
+        "Editor-rs",
+        options,
+        Box::new(|_cc| Ok(Box::<MyApp>::default())),
     )
 }
