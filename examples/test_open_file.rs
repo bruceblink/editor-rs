@@ -1,6 +1,4 @@
 // Cargo.toml 需要依赖：
-// egui = "0.24"
-// eframe = "0.24"
 // rfd = "0.9"       // 用于跨平台的文件对话框
 
 use eframe::egui;
@@ -29,51 +27,30 @@ impl eframe::App for MyApp {
 
     fn update(&mut self, ctx: &egui::Context, _frame:  &mut eframe::Frame) {
         set_chinese_font(ctx);
+        // 捕获键盘事件
+        let input = ctx.input(|input| input.clone());
+
+        // 检查是否按下 Ctrl + O 打开文件
+        if input.key_pressed(egui::Key::O) && input.modifiers.ctrl {
+            self.open_file();
+        }
+
+        // 检查是否按下 Ctrl + S 保存文件
+        if input.key_pressed(egui::Key::S) && input.modifiers.ctrl {
+            self.save_file();
+        }
+
+        // 顶部工具栏：打开 + 保存
         egui::TopBottomPanel::top("top_bar").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 // 打开文件
                 if ui.button("打开文件…").clicked() {
-                    if let Some(path) = FileDialog::new()
-                        .add_filter("文本文件", &["txt", "rs", "md"])
-                        .set_title("请选择一个文本文件")
-                        .pick_file()
-                    {
-                        match fs::read_to_string(&path) {
-                            Ok(text) => {
-                                self.file_content = text;
-                                self.current_file = Some(path);
-                            }
-                            Err(err) => {
-                                self.file_content = format!("读取失败：{}", err);
-                                self.current_file = None;
-                            }
-                        }
-                    }
+                    self.open_file();
                 }
 
                 // 保存文件
                 if ui.button("保存文件").clicked() {
-                    // 如果已经有打开的文件路径，直接写入
-                    if let Some(path) = &self.current_file {
-                        if let Err(err) = fs::write(path, &self.file_content) {
-                            // 保存失败提示
-                            self.file_content = format!("保存失败：{}", err);
-                        }
-                    } else {
-                        // 否则弹另存为对话框
-                        if let Some(path) = FileDialog::new()
-                            .set_title("另存为")
-                            .add_filter("文本文件", &["txt", "rs", "md"])
-                            .set_file_name("untitled.txt")
-                            .save_file()
-                        {
-                            if let Err(err) = fs::write(&path, &self.file_content) {
-                                self.file_content = format!("保存失败：{}", err);
-                            } else {
-                                self.current_file = Some(path);
-                            }
-                        }
-                    }
+                    self.save_file();
                 }
             });
         });
@@ -101,6 +78,53 @@ impl eframe::App for MyApp {
         });
     }
 }
+
+impl MyApp {
+    // 打开文件的函数
+    fn open_file(&mut self) {
+        if let Some(path) = FileDialog::new()
+            .add_filter("文本文件", &["txt", "rs", "md"])
+            .set_title("请选择一个文本文件")
+            .pick_file()
+        {
+            match fs::read_to_string(&path) {
+                Ok(text) => {
+                    self.file_content = text;
+                    self.current_file = Some(path);
+                }
+                Err(err) => {
+                    self.file_content = format!("读取失败：{}", err);
+                    self.current_file = None;
+                }
+            }
+        }
+    }
+
+    // 保存文件的函数
+    fn save_file(&mut self) {
+        // 如果已经有打开的文件路径，直接写入
+        if let Some(path) = &self.current_file {
+            if let Err(err) = fs::write(path, &self.file_content) {
+                self.file_content = format!("保存失败：{}", err);
+            }
+        } else {
+            // 否则弹另存为对话框
+            if let Some(path) = FileDialog::new()
+                .set_title("另存为")
+                .add_filter("文本文件", &["txt", "rs", "md"])
+                .set_file_name("untitled.txt")
+                .save_file()
+            {
+                if let Err(err) = fs::write(&path, &self.file_content) {
+                    self.file_content = format!("保存失败：{}", err);
+                } else {
+                    self.current_file = Some(path);
+                }
+            }
+        }
+    }
+}
+
 
 fn set_chinese_font(ctx: &egui::Context) {
     let mut fonts = FontDefinitions::default();
