@@ -1,6 +1,6 @@
 use crate::central_panel::{build_central_panel, preview_files_being_dropped};
 use crate::menu::build_menu_bar;
-use crate::title_bar::TitleBarFrame;
+use crate::title_bar::TitleBarPanel;
 use eframe::egui;
 use eframe::egui::{FontDefinitions, FontFamily, ViewportCommand};
 use std::sync::Arc;
@@ -12,7 +12,7 @@ pub struct EditorApp {
     pub dropped_files: Vec<egui::DroppedFile>,
     pub picked_path: Option<String>,
     pub file_content: String, // 文件内容
-    pub title_bar: TitleBarFrame,
+    pub title_bar: TitleBarPanel,
 }
 
 impl eframe::App for EditorApp {
@@ -20,7 +20,7 @@ impl eframe::App for EditorApp {
         // Set a custom Chinese font for the application.
         set_chinese_font(ctx);
         // 构建title bar
-        self.title_bar.build_title_bar(ctx);
+        self.title_bar.title_bar(ctx);
         // 构建 menu bar
         build_menu_bar(self, ctx);
         // 构建中央内容区
@@ -105,7 +105,7 @@ impl EditorApp {
             dropped_files: Vec::new(),
             picked_path: None,
             file_content: String::new(), // 初始化文件内容为空
-            title_bar: TitleBarFrame::default(),
+            title_bar: TitleBarPanel::default(),
         }
     }
     

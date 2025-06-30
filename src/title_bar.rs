@@ -2,11 +2,11 @@ use eframe::egui;
 use eframe::egui::{TopBottomPanel, ViewportCommand};
 
 #[derive(Clone, Copy, Default)]
-pub struct TitleBarFrame {
+pub struct TitleBarPanel {
 
 }
 
-impl TitleBarFrame {
+impl TitleBarPanel {
 
     pub fn title_bar_ui(self, ui: &mut egui::Ui, title_bar_rect: eframe::epaint::Rect, title: &str) {
 
@@ -102,7 +102,7 @@ impl TitleBarFrame {
     }
 
     // 构建title_bar
-    pub fn build_title_bar(self, ctx: &egui::Context) {
+    pub fn title_bar(self, ctx: &egui::Context) {
         let title_frame = self.custom_title_bar_frame(ctx);
 
         TopBottomPanel::top("title_bar_panel").frame(title_frame).exact_height(32.0).show(ctx, |ui| {
