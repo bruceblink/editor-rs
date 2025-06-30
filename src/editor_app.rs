@@ -7,10 +7,10 @@ use std::sync::Arc;
 
 #[derive(Default)]
 pub struct EditorApp {
-    pub(crate) show_confirmation_dialog: bool,
-    pub(crate) allowed_to_close: bool,
-    pub(crate) dropped_files: Vec<egui::DroppedFile>,
-    pub(crate) picked_path: Option<String>,
+    pub show_confirmation_dialog: bool,
+    pub allowed_to_close: bool,
+    pub dropped_files: Vec<egui::DroppedFile>,
+    pub picked_path: Option<String>,
 }
 
 impl eframe::App for EditorApp {
