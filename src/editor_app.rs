@@ -11,6 +11,7 @@ pub struct EditorApp {
     pub allowed_to_close: bool,
     pub dropped_files: Vec<egui::DroppedFile>,
     pub picked_path: Option<String>,
+    pub file_content: String, // 文件内容
 }
 
 impl eframe::App for EditorApp {

@@ -1,3 +1,4 @@
+use std::fs;
 use eframe::egui::{self, Stroke, TopBottomPanel, ViewportCommand};
 use crate::editor_app::EditorApp;
 
@@ -11,7 +12,11 @@ pub fn menu_example(editor: &mut EditorApp, ui: &mut egui::Ui) {
             }
             if ui.button("Open…").clicked() {
                 if let Some(path) = rfd::FileDialog::new().pick_file() {
-                    editor.picked_path = Some(path.display().to_string());
+                    // 读取文件内容到字符串
+                    match fs::read_to_string(&path) {
+                        Ok(text) => editor.file_content = text.to_string(),
+                        Err(err) => editor.file_content = format!("读取失败：{}", &err),
+                    }
                 }
             }
 

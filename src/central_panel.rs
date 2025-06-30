@@ -1,4 +1,5 @@
 use eframe::egui;
+use eframe::egui::ScrollArea;
 use crate::editor_app::EditorApp;
 
 pub fn build_central_panel(app: &mut EditorApp, ctx: &egui::Context) {
@@ -11,6 +12,17 @@ pub fn build_central_panel(app: &mut EditorApp, ctx: &egui::Context) {
                 ui.monospace(picked_path);
             });
         }
+        ScrollArea::vertical()
+            .auto_shrink([false; 2])
+            .show(ui, |ui| {
+                ui.add(
+                    egui::TextEdit::multiline(&mut app.file_content)
+                        .font(egui::TextStyle::Monospace) // 等宽字体
+                        .desired_rows(20)
+                        .lock_focus(true)
+                        .desired_width(f32::INFINITY),
+                );
+            });
 
         // Show dropped files (if any):
         if !app.dropped_files.is_empty() {
