@@ -1,5 +1,5 @@
 use eframe::egui;
-use eframe::egui::{ViewportCommand};
+use eframe::egui::{TopBottomPanel, ViewportCommand};
 
 pub fn title_bar_ui(ui: &mut egui::Ui, title_bar_rect: eframe::epaint::Rect, title: &str) {
 
@@ -92,4 +92,27 @@ fn close_maximize_minimize(ui: &mut egui::Ui) {
     if minimized_response.clicked() {
         ui.ctx().send_viewport_cmd(ViewportCommand::Minimized(true));
     }
+}
+
+// 构建title_bar
+pub fn build_title_bar(ctx: &egui::Context) {
+    let title_frame = custom_title_bar_frame(ctx);
+    
+    TopBottomPanel::top("title_bar_panel").frame(title_frame).exact_height(32.0).show(ctx, |ui| {
+        let rect = ui.max_rect();
+        title_bar_ui(ui, rect, "Editor-rs");
+    });
+}
+
+fn custom_title_bar_frame(ctx: &egui::Context) -> egui::Frame {
+    use egui::CornerRadius;
+    let mut rounding = CornerRadius::ZERO;
+    rounding.nw = 10.0 as u8; // 右上角
+    rounding.ne = 10.0 as u8; // 右下角
+
+    egui::Frame::NONE
+        .fill(ctx.style().visuals.window_fill())
+        //.stroke(ctx.style().visuals.widgets.noninteractive.fg_stroke)
+        .corner_radius(rounding)
+        .outer_margin(1.0)
 }

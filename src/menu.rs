@@ -1,4 +1,4 @@
-use eframe::egui::{self, ViewportCommand};
+use eframe::egui::{self, Stroke, TopBottomPanel, ViewportCommand};
 use crate::editor_app::EditorApp;
 
 pub fn menu_example(editor: &mut EditorApp, ui: &mut egui::Ui) {
@@ -44,5 +44,19 @@ pub fn menu_example(editor: &mut EditorApp, ui: &mut egui::Ui) {
 
             }
         });
+    });
+}
+
+pub fn build_menu_bar(app: &mut EditorApp ,ctx: &egui::Context) {
+    // 顶部 menu_bar，紧跟 title_bar 之下
+    TopBottomPanel::top("menu_bar_panel").exact_height(24.0).show(ctx, |ui| {
+        menu_example(app, ui);
+        let rect   = ui.clip_rect();
+        let color  = ctx.style().visuals.widgets.noninteractive.fg_stroke.color;
+        let stroke = Stroke::new(2.0, color);  // 把宽度设为 2
+
+        let painter = ui.painter();
+        painter.line_segment([rect.left_top(),    rect.left_bottom()],  stroke);
+        painter.line_segment([rect.right_top(),   rect.right_bottom()], stroke);
     });
 }
