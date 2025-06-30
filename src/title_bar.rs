@@ -82,8 +82,7 @@ impl TitleBarFrame {
                 .add(Button::new(RichText::new("🗗").size(button_height)))
                 .on_hover_text("Restore window");
             if maximized_response.clicked() {
-                ui.ctx()
-                    .send_viewport_cmd(ViewportCommand::Maximized(false));
+                ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(false));
             }
         } else {
             let maximized_response = ui
@@ -96,7 +95,7 @@ impl TitleBarFrame {
 
         let minimized_response = ui
             .add(Button::new(RichText::new("🗕").size(button_height)))
-            .on_hover_text("Minimize the window");
+            .on_hover_text("Minimize window");
         if minimized_response.clicked() {
             ui.ctx().send_viewport_cmd(ViewportCommand::Minimized(true));
         }
