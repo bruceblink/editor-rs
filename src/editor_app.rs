@@ -103,7 +103,7 @@ impl EditorApp {
             dropped_files: Vec::new(),
             picked_path: None,
             file_content: String::new(), // 初始化文件内容为空
-            title_bar: TitleBarPanel::default(),
+            title_bar: TitleBarPanel::new("Editor-rs"),
         }
     }
     

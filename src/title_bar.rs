@@ -3,12 +3,12 @@ use eframe::egui::{TopBottomPanel, ViewportCommand};
 
 #[derive(Clone, Copy, Default)]
 pub struct TitleBarPanel {
-
+    title: &'static str
 }
 
 impl TitleBarPanel {
 
-    pub fn title_bar_ui(self, ui: &mut egui::Ui, title_bar_rect: eframe::epaint::Rect, title: &str) {
+    pub fn title_bar_ui(self, ui: &mut egui::Ui, title_bar_rect: eframe::epaint::Rect) {
 
         use egui::{vec2, Align2, FontId, Id, PointerButton, Sense, UiBuilder};
 
@@ -24,7 +24,7 @@ impl TitleBarPanel {
         painter.text(
             title_bar_rect.center(),
             Align2::CENTER_CENTER,
-            title,
+            self.title,
             FontId::proportional(20.0),
             ui.style().visuals.text_color(),
         );
@@ -107,7 +107,7 @@ impl TitleBarPanel {
 
         TopBottomPanel::top("title_bar_panel").frame(title_frame).exact_height(32.0).show(ctx, |ui| {
             let rect = ui.max_rect();
-            self.title_bar_ui(ui, rect, "Editor-rs");
+            self.title_bar_ui(ui, rect);
         });
     }
 
@@ -124,5 +124,11 @@ impl TitleBarPanel {
             .outer_margin(1.0)
     }
     
+}
+
+impl TitleBarPanel {
+    pub fn new(title: &'static str) -> Self {
+        TitleBarPanel { title }
+    }
 }
 
