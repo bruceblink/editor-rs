@@ -5,6 +5,8 @@ use crate::editor_app::EditorApp;
 pub fn menu_example(editor: &mut EditorApp, ui: &mut egui::Ui) {
     // 只渲染菜单栏内容，不包裹TopBottomPanel
     egui::menu::bar(ui, |ui| {
+        // switch theme
+        egui::widgets::global_theme_preference_switch(ui);
         // File 菜单
         ui.menu_button("File", |ui| {
             if ui.button("New").clicked() {
@@ -40,13 +42,9 @@ pub fn menu_example(editor: &mut EditorApp, ui: &mut egui::Ui) {
 
         // Help 菜单
         ui.menu_button("Help", |ui| {
-            ui.horizontal(|ui| {
-                ui.label("theme:");
-                egui::widgets::global_theme_preference_buttons(ui);
-            });
             if ui.button("About…").clicked() {
                 // 弹出 About 对话框
-
+               
             }
         });
     });
