@@ -2,17 +2,28 @@
 // rfd = "0.9"       // 用于跨平台的文件对话框
 
 use eframe::egui;
+use eframe::egui::{FontDefinitions, FontFamily};
 use egui::ScrollArea;
 use rfd::FileDialog;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Arc;
-use eframe::egui::{FontDefinitions, FontFamily};
 //use editor_rs::editor_app::EditorApp;
 
 struct MyApp {
     file_content: String,
     current_file: Option<PathBuf>, // 新增：记录当前文件路径
+}
+
+impl MyApp {
+    // 新增：构造函数
+    fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        set_chinese_font(&cc.egui_ctx);
+        Self {
+            file_content: String::new(),
+            current_file: None,
+        }
+    }
 }
 
 impl Default for MyApp {
@@ -27,7 +38,6 @@ impl Default for MyApp {
 impl eframe::App for MyApp {
 
     fn update(&mut self, ctx: &egui::Context, _frame:  &mut eframe::Frame) {
-        set_chinese_font(ctx);
         // 捕获键盘事件
         let input = ctx.input(|input| input.clone());
 
@@ -176,6 +186,6 @@ fn main()  -> eframe::Result{
     eframe::run_native(
         "Editor-rs",
         options,
-        Box::new(|_cc| Ok(Box::<MyApp>::default())),
+        Box::new(|_cc| Ok(Box::new(MyApp::new(_cc)))),
     )
 }
