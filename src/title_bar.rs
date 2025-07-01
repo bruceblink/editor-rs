@@ -79,14 +79,14 @@ impl TitleBarPanel {
         let is_maximized = ui.input(|i| i.viewport().maximized.unwrap_or(false));
         if is_maximized {
             let maximized_response = ui
-                .add(Button::new(RichText::new("🗗").size(button_height)))
+                .add(Button::new(RichText::new("🗖").strong().size(button_height)))
                 .on_hover_text("Restore window");
             if maximized_response.clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(false));
             }
         } else {
             let maximized_response = ui
-                .add(Button::new(RichText::new("🗗").size(button_height)))
+                .add(Button::new(RichText::new("▢").strong().size(button_height)))
                 .on_hover_text("Maximize window");
             if maximized_response.clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(true));
@@ -131,4 +131,3 @@ impl TitleBarPanel {
         TitleBarPanel { title }
     }
 }
-
